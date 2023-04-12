@@ -1,145 +1,41 @@
-type AuctionBufferUpdated @entity(immutable: true) {
-  id: Bytes!
-  timeBuffer: BigInt! # uint256
-  bidBufferBps: BigInt! # uint256
-  blockNumber: BigInt!
-  blockTimestamp: BigInt!
-  transactionHash: Bytes!
+enum ListingStatus {
+  Open
+  Closed
+  Sold
 }
 
-type AuctionClosed @entity(immutable: true) {
-  id: Bytes!
-  listingId: BigInt! # uint256
-  closer: Bytes! # address
-  cancelled: Boolean! # bool
-  auctionCreator: Bytes! # address
-  winningBidder: Bytes! # address
-  blockNumber: BigInt!
-  blockTimestamp: BigInt!
-  transactionHash: Bytes!
+enum TokenType {
+  ERC1155
+  ERC721
 }
 
-type Initialized @entity(immutable: true) {
-  id: Bytes!
-  version: Int! # uint8
-  blockNumber: BigInt!
-  blockTimestamp: BigInt!
-  transactionHash: Bytes!
+enum ListingType {
+  Fixed
+  Auction
 }
 
-type ListingAdded @entity(immutable: true) {
-  id: Bytes!
-  listingId: BigInt! # uint256
-  assetAddress: Bytes! # address
-  lister: Bytes! # address
-  listing_listingId: BigInt! # uint256
-  listing_owner: Bytes! # address
-  listing_assetAddress: Bytes! # address
-  listing_tokenId: BigInt! # uint256
-  listing_startTime: BigInt! # uint256
-  listing_endTime: BigInt! # uint256
-  listing_quantity: BigInt! # uint256
-  listing_currency: Bytes! # address
-  listing_reservePricePerToken: BigInt! # uint256
-  listing_buyoutPricePerToken: BigInt! # uint256
-  listing_tokenType: Int! # uint8
-  listing_listingType: Int! # uint8
-  blockNumber: BigInt!
-  blockTimestamp: BigInt!
-  transactionHash: Bytes!
+type Listing @entity {
+  id: ID!
+  assetAddress: Bytes!
+  lister: Bytes!
+  tokenId: BigInt!
+  startTime: BigInt!
+  endTime: BigInt!
+  quantity: BigInt!
+  currency: Bytes!
+  reservePricePerToken: BigInt!
+  buyoutPricePerToken: BigInt!
+  tokenType: TokenType!
+  listingType: ListingType!
+  status: ListingStatus!
 }
 
-type ListingRemoved @entity(immutable: true) {
-  id: Bytes!
-  listingId: BigInt! # uint256
-  listingCreator: Bytes! # address
-  blockNumber: BigInt!
-  blockTimestamp: BigInt!
-  transactionHash: Bytes!
-}
-
-type ListingUpdated @entity(immutable: true) {
-  id: Bytes!
-  listingId: BigInt! # uint256
-  listingCreator: Bytes! # address
-  listing_listingId: BigInt! # uint256
-  listing_owner: Bytes! # address
-  listing_assetAddress: Bytes! # address
-  listing_tokenId: BigInt! # uint256
-  listing_startTime: BigInt! # uint256
-  listing_endTime: BigInt! # uint256
-  listing_quantity: BigInt! # uint256
-  listing_currency: Bytes! # address
-  listing_reservePricePerToken: BigInt! # uint256
-  listing_buyoutPricePerToken: BigInt! # uint256
-  listing_tokenType: Int! # uint8
-  listing_listingType: Int! # uint8
-  blockNumber: BigInt!
-  blockTimestamp: BigInt!
-  transactionHash: Bytes!
-}
-
-type NewOffer @entity(immutable: true) {
-  id: Bytes!
-  listingId: BigInt! # uint256
-  offeror: Bytes! # address
-  listingType: Int! # uint8
-  quantity: BigInt! # uint256
-  price: BigInt! # uint256
-  currency: Bytes! # address
-  blockNumber: BigInt!
-  blockTimestamp: BigInt!
-  transactionHash: Bytes!
-}
-
-type NewSale @entity(immutable: true) {
-  id: Bytes!
-  listingId: BigInt! # uint256
-  assetContract: Bytes! # address
-  lister: Bytes! # address
-  buyer: Bytes! # address
-  quantity: BigInt! # uint256
-  price: BigInt! # uint256
-  blockNumber: BigInt!
-  blockTimestamp: BigInt!
-  transactionHash: Bytes!
-}
-
-type PlatformFeeInfoUpdated @entity(immutable: true) {
-  id: Bytes!
-  platformFeeWallet: Bytes! # address
-  platformFeeBps: BigInt! # uint256
-  blockNumber: BigInt!
-  blockTimestamp: BigInt!
-  transactionHash: Bytes!
-}
-
-type RoleAdminChanged @entity(immutable: true) {
-  id: Bytes!
-  role: Bytes! # bytes32
-  previousAdminRole: Bytes! # bytes32
-  newAdminRole: Bytes! # bytes32
-  blockNumber: BigInt!
-  blockTimestamp: BigInt!
-  transactionHash: Bytes!
-}
-
-type RoleGranted @entity(immutable: true) {
-  id: Bytes!
-  role: Bytes! # bytes32
-  account: Bytes! # address
-  sender: Bytes! # address
-  blockNumber: BigInt!
-  blockTimestamp: BigInt!
-  transactionHash: Bytes!
-}
-
-type RoleRevoked @entity(immutable: true) {
-  id: Bytes!
-  role: Bytes! # bytes32
-  account: Bytes! # address
-  sender: Bytes! # address
-  blockNumber: BigInt!
-  blockTimestamp: BigInt!
-  transactionHash: Bytes!
+type Offer @entity {
+  id: ID!
+  listingId: BigInt!
+  offeror: Bytes!
+  listingType: ListingType!
+  quantity: BigInt!
+  price: BigInt!
+  currency: Bytes!
 }

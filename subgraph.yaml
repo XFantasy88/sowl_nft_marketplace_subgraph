@@ -1,0 +1,57 @@
+specVersion: 0.0.5
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum
+    name: Marketplace
+    network: chapel
+    source:
+      address: "0x38dd8783116170f9f0ed687a21f635de5202628e"
+      abi: Marketplace
+      startBlock: 28879970
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - AuctionBufferUpdated
+        - AuctionClosed
+        - Initialized
+        - ListingAdded
+        - ListingRemoved
+        - ListingUpdated
+        - NewOffer
+        - NewSale
+        - PlatformFeeInfoUpdated
+        - RoleAdminChanged
+        - RoleGranted
+        - RoleRevoked
+      abis:
+        - name: Marketplace
+          file: ./abis/Marketplace.json
+      eventHandlers:
+        - event: AuctionBufferUpdated(uint256,uint256)
+          handler: handleAuctionBufferUpdated
+        - event: AuctionClosed(indexed uint256,indexed address,indexed bool,address,address)
+          handler: handleAuctionClosed
+        - event: Initialized(uint8)
+          handler: handleInitialized
+        - event: ListingAdded(indexed uint256,indexed address,indexed address,(uint256,address,address,uint256,uint256,uint256,uint256,address,uint256,uint256,uint8,uint8))
+          handler: handleListingAdded
+        - event: ListingRemoved(indexed uint256,indexed address)
+          handler: handleListingRemoved
+        - event: ListingUpdated(indexed uint256,indexed address,(uint256,address,address,uint256,uint256,uint256,uint256,address,uint256,uint256,uint8,uint8))
+          handler: handleListingUpdated
+        - event: NewOffer(indexed uint256,indexed address,indexed uint8,uint256,uint256,address)
+          handler: handleNewOffer
+        - event: NewSale(indexed uint256,indexed address,indexed address,address,uint256,uint256)
+          handler: handleNewSale
+        - event: PlatformFeeInfoUpdated(indexed address,uint256)
+          handler: handlePlatformFeeInfoUpdated
+        - event: RoleAdminChanged(indexed bytes32,indexed bytes32,indexed bytes32)
+          handler: handleRoleAdminChanged
+        - event: RoleGranted(indexed bytes32,indexed address,indexed address)
+          handler: handleRoleGranted
+        - event: RoleRevoked(indexed bytes32,indexed address,indexed address)
+          handler: handleRoleRevoked
+      file: ./src/marketplace.ts

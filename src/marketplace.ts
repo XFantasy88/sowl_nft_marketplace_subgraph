@@ -89,19 +89,17 @@ export function handleListingUpdated(event: ListingUpdatedEvent): void {
 }
 
 export function handleNewOffer(event: NewOfferEvent): void {
-  let entity = new NewOffer(
-    event.transaction.hash.concatI32(event.logIndex.toI32())
+  let entity = new Offer(
+    event.params.listingId.toString() + ":" + event.params.offeror
   );
+
   entity.listingId = event.params.listingId;
   entity.offeror = event.params.offeror;
-  entity.listingType = event.params.listingType;
+  entity.listingType = event.params.listingType == 0 ? "Fixed" : "Auction";
   entity.quantity = event.params.quantity;
   entity.price = event.params.price;
   entity.currency = event.params.currency;
-
-  entity.blockNumber = event.block.number;
-  entity.blockTimestamp = event.block.timestamp;
-  entity.transactionHash = event.transaction.hash;
+  entity.status = "Open";
 
   entity.save();
 }

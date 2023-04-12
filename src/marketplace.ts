@@ -92,19 +92,12 @@ export function handleNewOffer(event: NewOfferEvent): void {
 }
 
 export function handleNewSale(event: NewSaleEvent): void {
-  let entity = new NewSale(
-    event.transaction.hash.concatI32(event.logIndex.toI32())
-  );
-  entity.listingId = event.params.listingId;
-  entity.assetContract = event.params.assetContract;
-  entity.lister = event.params.lister;
-  entity.buyer = event.params.buyer;
-  entity.quantity = event.params.quantity;
-  entity.price = event.params.price;
+  let entity = Listing.load(event.params.listingId.toString());
 
-  entity.blockNumber = event.block.number;
-  entity.blockTimestamp = event.block.timestamp;
-  entity.transactionHash = event.transaction.hash;
+  if (entity) {
+    entity.status = "Sold";
+    entity.buyer = event.params.buyer;
 
-  entity.save();
+    entity.save();
+  }
 }

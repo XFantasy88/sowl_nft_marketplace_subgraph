@@ -63,17 +63,12 @@ export function handleListingAdded(event: ListingAddedEvent): void {
 }
 
 export function handleListingRemoved(event: ListingRemovedEvent): void {
-  let entity = new ListingRemoved(
-    event.transaction.hash.concatI32(event.logIndex.toI32())
-  );
-  entity.listingId = event.params.listingId;
-  entity.listingCreator = event.params.listingCreator;
+  let entity = Listing.load(event.params.listingId.toString());
 
-  entity.blockNumber = event.block.number;
-  entity.blockTimestamp = event.block.timestamp;
-  entity.transactionHash = event.transaction.hash;
-
-  entity.save();
+  if (entity) {
+    entity.status = "Closed";
+    entity.save();
+  }
 }
 
 export function handleListingUpdated(event: ListingUpdatedEvent): void {

@@ -72,30 +72,20 @@ export function handleListingRemoved(event: ListingRemovedEvent): void {
 }
 
 export function handleListingUpdated(event: ListingUpdatedEvent): void {
-  let entity = new ListingUpdated(
-    event.transaction.hash.concatI32(event.logIndex.toI32())
-  );
-  entity.listingId = event.params.listingId;
-  entity.listingCreator = event.params.listingCreator;
-  entity.listing_listingId = event.params.listing.listingId;
-  entity.listing_owner = event.params.listing.owner;
-  entity.listing_assetAddress = event.params.listing.assetAddress;
-  entity.listing_tokenId = event.params.listing.tokenId;
-  entity.listing_startTime = event.params.listing.startTime;
-  entity.listing_endTime = event.params.listing.endTime;
-  entity.listing_quantity = event.params.listing.quantity;
-  entity.listing_currency = event.params.listing.currency;
-  entity.listing_reservePricePerToken =
-    event.params.listing.reservePricePerToken;
-  entity.listing_buyoutPricePerToken = event.params.listing.buyoutPricePerToken;
-  entity.listing_tokenType = event.params.listing.tokenType;
-  entity.listing_listingType = event.params.listing.listingType;
+  let entity = Listing.load(event.params.listingId.toString());
 
-  entity.blockNumber = event.block.number;
-  entity.blockTimestamp = event.block.timestamp;
-  entity.transactionHash = event.transaction.hash;
+  if (entity) {
+    entity.startTime = event.params.listing.startTime;
+    entity.endTime = event.params.listing.endTime;
+    entity.quantity = event.params.listing.quantity;
+    entity.currency = event.params.listing.currency;
+    entity.reservePricePerToken = event.params.listing.reservePricePerToken;
+    entity.buyoutPricePerToken = event.params.listing.buyoutPricePerToken;
+    entity.listingType =
+      event.params.listing.listingType == 0 ? "Fixed" : "Auction";
 
-  entity.save();
+    entity.save();
+  }
 }
 
 export function handleNewOffer(event: NewOfferEvent): void {

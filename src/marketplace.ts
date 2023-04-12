@@ -1,5 +1,6 @@
+import { Address } from "@graphprotocol/graph-ts";
+
 import {
-  AuctionBufferUpdated as AuctionBufferUpdatedEvent,
   AuctionClosed as AuctionClosedEvent,
   ListingAdded as ListingAddedEvent,
   ListingRemoved as ListingRemovedEvent,
@@ -9,37 +10,19 @@ import {
 } from "../generated/Marketplace/Marketplace";
 import { Listing, Offer } from "../generated/schema";
 
-export function handleAuctionBufferUpdated(
-  event: AuctionBufferUpdatedEvent
-): void {
-  let entity = new AuctionBufferUpdated(
-    event.transaction.hash.concatI32(event.logIndex.toI32())
-  );
-  entity.timeBuffer = event.params.timeBuffer;
-  entity.bidBufferBps = event.params.bidBufferBps;
-
-  entity.blockNumber = event.block.number;
-  entity.blockTimestamp = event.block.timestamp;
-  entity.transactionHash = event.transaction.hash;
-
-  entity.save();
-}
-
 export function handleAuctionClosed(event: AuctionClosedEvent): void {
-  let entity = new AuctionClosed(
-    event.transaction.hash.concatI32(event.logIndex.toI32())
-  );
-  entity.listingId = event.params.listingId;
-  entity.closer = event.params.closer;
-  entity.cancelled = event.params.cancelled;
-  entity.auctionCreator = event.params.auctionCreator;
-  entity.winningBidder = event.params.winningBidder;
+  let entity = Listing.load(event.params.listingId.toString());
 
-  entity.blockNumber = event.block.number;
-  entity.blockTimestamp = event.block.timestamp;
-  entity.transactionHash = event.transaction.hash;
+  if (entity) {
+    if (event.params.cancelled) {
+      entity.status = "Closed";
+    } else {
+      entity.status = "Sold";
+      entity.buyer = event.params.winningBidder;
+    }
 
-  entity.save();
+    entity.save();
+  }
 }
 
 export function handleListingAdded(event: ListingAddedEvent): void {
@@ -58,6 +41,10 @@ export function handleListingAdded(event: ListingAddedEvent): void {
   entity.listingType =
     event.params.listing.listingType == 0 ? "Fixed" : "Auction";
   entity.status = "Open";
+
+  entity.buyer = Address.fromHexString(
+    "0x0000000000000000000000000000000000000000"
+  );
 
   entity.save();
 }

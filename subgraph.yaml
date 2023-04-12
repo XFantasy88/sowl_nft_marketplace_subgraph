@@ -30,8 +30,6 @@ dataSources:
         - name: Marketplace
           file: ./abis/Marketplace.json
       eventHandlers:
-        - event: AuctionBufferUpdated(uint256,uint256)
-          handler: handleAuctionBufferUpdated
         - event: AuctionClosed(indexed uint256,indexed address,indexed bool,address,address)
           handler: handleAuctionClosed
         - event: ListingAdded(indexed uint256,indexed address,indexed address,(uint256,address,address,uint256,uint256,uint256,uint256,address,uint256,uint256,uint8,uint8))

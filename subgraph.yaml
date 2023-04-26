@@ -4,28 +4,20 @@ schema:
 dataSources:
   - kind: ethereum
     name: Marketplace
-    network: chapel
+    network: bsc
     source:
-      address: "0x105ce917f97Df74E9264DD25b7B2ed34f8eD1439"
+      address: "0x718ab5b879e2FBbe9D8999d4CAd3d7a0e63b9d90"
       abi: Marketplace
-      startBlock: 28879970
+      startBlock: 27673904
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
       language: wasm/assemblyscript
       entities:
-        - AuctionBufferUpdated
-        - AuctionClosed
-        - Initialized
-        - ListingAdded
-        - ListingRemoved
-        - ListingUpdated
-        - NewOffer
-        - NewSale
-        - PlatformFeeInfoUpdated
-        - RoleAdminChanged
-        - RoleGranted
-        - RoleRevoked
+        - Listing
+        - Offer
+        - User
+        - AuctionBufferInfo
       abis:
         - name: Marketplace
           file: ./abis/Marketplace.json
@@ -42,4 +34,6 @@ dataSources:
           handler: handleNewOffer
         - event: NewSale(indexed uint256,indexed address,indexed address,address,uint256,uint256)
           handler: handleNewSale
+        - event: AuctionBuffersUpdated(uint256,uint256)
+          handler: handleAuctionBufferUpdated
       file: ./src/marketplace.ts

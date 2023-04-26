@@ -20,10 +20,16 @@ enum ListingType {
   Auction
 }
 
+type AuctionBufferInfo @entity{
+  id: ID!
+  timeBuffer: BigInt!
+  bpBuffer: BigInt!
+}
+
 type Listing @entity {
   id: ID!
   assetAddress: Bytes!
-  lister: Bytes!
+  lister: User!
   tokenId: BigInt!
   startTime: BigInt!
   endTime: BigInt!
@@ -33,17 +39,27 @@ type Listing @entity {
   buyoutPricePerToken: BigInt!
   tokenType: TokenType!
   listingType: ListingType!
-  buyer: Bytes!
+  buyer: User
+  offers: [Offer!]! @derivedFrom(field: "listingId")
   status: ListingStatus!
+  createdAt: BigInt!
 }
 
 type Offer @entity {
   id: ID!
-  listingId: BigInt!
-  offeror: Bytes!
+  listingId: Listing!
+  offeror: User!
   listingType: ListingType!
   quantity: BigInt!
   price: BigInt!
   currency: Bytes!
   status: OfferStatus!
+  createdAt: BigInt!
+}
+
+type User @entity {
+  id: Bytes!
+  listings: [Listing!]! @derivedFrom(field: "lister")
+  offers: [Offer!]! @derivedFrom(field: "offeror")
+  boughts: [Listing!]! @derivedFrom(field: "buyer")
 }

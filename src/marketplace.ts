@@ -8,8 +8,14 @@ import {
   ListingUpdated as ListingUpdatedEvent,
   NewOffer as NewOfferEvent,
   NewSale as NewSaleEvent,
+  NewCollection as NewCollectionEvent,
 } from "../generated/Marketplace/Marketplace";
-import { Listing, Offer, AuctionBufferInfo } from "../generated/schema";
+import {
+  Listing,
+  Offer,
+  AuctionBufferInfo,
+  Collection,
+} from "../generated/schema";
 import { getUser } from "./utils/getUser";
 import { getAuctionBuffer } from "./utils/getAuctionBuffer";
 
@@ -145,4 +151,19 @@ export function handleNewSale(event: NewSaleEvent): void {
 
     entity.save();
   }
+}
+
+export function handleNewCollection(event: NewCollectionEvent): void {
+  let entity = Collection.load(event.params.collection);
+
+  let lister = getUser(event.params.lister);
+
+  if (!entity) {
+    entity = new Collection(event.params.collection);
+  }
+
+  entity.lister = lister.id;
+  entity.image = event.params.metadata;
+
+  entity.save();
 }

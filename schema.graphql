@@ -62,4 +62,11 @@ type User @entity {
   listings: [Listing!]! @derivedFrom(field: "lister")
   offers: [Offer!]! @derivedFrom(field: "offeror")
   boughts: [Listing!]! @derivedFrom(field: "buyer")
+  collections: [Collection!]! @derivedFrom(field: "lister")
+}
+
+type Collection @entity {
+  id: Bytes!
+  lister: User!
+  image: String!
 }

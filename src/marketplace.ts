@@ -37,14 +37,20 @@ export function handleAuctionBufferUpdated(
 export function handleAuctionClosed(event: AuctionClosedEvent): void {
   let entity = Listing.load(event.params.listingId.toString());
 
-  let buyer = getUser(event.params.winningBidder);
-
   if (entity) {
     if (event.params.cancelled) {
-      entity.status = "Closed";
+      entity.status = "Cancelled";
     } else {
-      entity.status = "Sold";
-      entity.buyer = buyer.id;
+      if (event.params.closeFor == entity.lister) {
+        entity.listingAccepted = true;
+      } else {
+        entity.bidAccepted = true;
+      }
+      entity.endTime = event.block.timestamp;
+
+      if (entity.listingAccepted && entity.bidAccepted) {
+        entity.status = "Accepted";
+      }
     }
 
     entity.save();
@@ -66,6 +72,8 @@ export function handleListingAdded(event: ListingAddedEvent): void {
   entity.reservePricePerToken = event.params.listing.reservePricePerToken;
   entity.buyoutPricePerToken = event.params.listing.buyoutPricePerToken;
   entity.tokenType = event.params.listing.tokenType == 0 ? "ERC1155" : "ERC721";
+  entity.bidAccepted = false;
+  entity.listingAccepted = false;
   entity.listingType =
     event.params.listing.listingType == 0 ? "Fixed" : "Auction";
   entity.status = "Open";
@@ -78,7 +86,7 @@ export function handleListingRemoved(event: ListingRemovedEvent): void {
   let entity = Listing.load(event.params.listingId.toString());
 
   if (entity) {
-    entity.status = "Closed";
+    entity.status = "Cancelled";
     entity.save();
   }
 }
@@ -132,7 +140,6 @@ export function handleNewOffer(event: NewOfferEvent): void {
     entity.quantity = event.params.quantityWanted;
     entity.price = event.params.totalOfferAmount;
     entity.currency = event.params.currency;
-    entity.status = "Open";
 
     entity.createdAt = event.block.timestamp;
 
@@ -143,11 +150,8 @@ export function handleNewOffer(event: NewOfferEvent): void {
 export function handleNewSale(event: NewSaleEvent): void {
   let entity = Listing.load(event.params.listingId.toString());
 
-  let buyer = getUser(event.params.buyer);
-
   if (entity) {
-    entity.status = "Sold";
-    entity.buyer = buyer.id;
+    entity.status = "Accepted";
 
     entity.save();
   }

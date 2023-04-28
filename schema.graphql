@@ -1,12 +1,6 @@
 enum ListingStatus {
   Open
-  Closed
-  Sold
-}
-
-enum OfferStatus {
-  Open
-  Closed
+  Cancelled
   Accepted
 }
 
@@ -20,7 +14,7 @@ enum ListingType {
   Auction
 }
 
-type AuctionBufferInfo @entity{
+type AuctionBufferInfo @entity {
   id: ID!
   timeBuffer: BigInt!
   bpBuffer: BigInt!
@@ -39,8 +33,9 @@ type Listing @entity {
   buyoutPricePerToken: BigInt!
   tokenType: TokenType!
   listingType: ListingType!
-  buyer: User
   offers: [Offer!]! @derivedFrom(field: "listingId")
+  bidAccepted: Boolean!
+  listingAccepted: Boolean!
   status: ListingStatus!
   createdAt: BigInt!
 }
@@ -53,7 +48,6 @@ type Offer @entity {
   quantity: BigInt!
   price: BigInt!
   currency: Bytes!
-  status: OfferStatus!
   createdAt: BigInt!
 }
 
@@ -61,7 +55,6 @@ type User @entity {
   id: Bytes!
   listings: [Listing!]! @derivedFrom(field: "lister")
   offers: [Offer!]! @derivedFrom(field: "offeror")
-  boughts: [Listing!]! @derivedFrom(field: "buyer")
   collections: [Collection!]! @derivedFrom(field: "lister")
 }
 

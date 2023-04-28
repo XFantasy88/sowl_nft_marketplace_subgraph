@@ -6,9 +6,9 @@ dataSources:
     name: Marketplace
     network: bsc
     source:
-      address: "0xD2704907267F6fD9A77CB9C9e1CBe02451F65499"
+      address: "0x075e67e2019958BA19f223D1B93386054e5c1a31"
       abi: Marketplace
-      startBlock: 27706257
+      startBlock: 27722518
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
@@ -23,7 +23,7 @@ dataSources:
         - name: Marketplace
           file: ./abis/Marketplace.json
       eventHandlers:
-        - event: AuctionClosed(indexed uint256,indexed address,indexed bool,address,address)
+        - event: AuctionClosed(indexed uint256,indexed address,indexed address,bool,address,address)
           handler: handleAuctionClosed
         - event: ListingAdded(indexed uint256,indexed address,indexed address,(uint256,address,address,uint256,uint256,uint256,uint256,address,uint256,uint256,uint8,uint8))
           handler: handleListingAdded

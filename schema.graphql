@@ -62,4 +62,5 @@ type Collection @entity {
   id: Bytes!
   lister: User!
   image: String!
+  disabled: Boolean!
 }

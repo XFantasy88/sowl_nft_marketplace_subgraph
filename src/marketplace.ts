@@ -9,6 +9,7 @@ import {
   NewOffer as NewOfferEvent,
   NewSale as NewSaleEvent,
   NewCollection as NewCollectionEvent,
+  CollectionRemoved as CollectionRemovedEvent,
 } from "../generated/Marketplace/Marketplace";
 import {
   Listing,
@@ -168,6 +169,16 @@ export function handleNewCollection(event: NewCollectionEvent): void {
 
   entity.lister = lister.id;
   entity.image = event.params.metadata;
+  entity.disabled = true;
 
   entity.save();
+}
+
+export function handleRemoveCollection(event: CollectionRemovedEvent): void {
+  let entity = Collection.load(event.params.collection);
+
+  if (entity) {
+    entity.disabled = false;
+    entity.save();
+  }
 }
